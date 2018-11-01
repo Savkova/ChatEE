@@ -18,8 +18,8 @@ public class Main {
             switch (actionNumber) {
                 case 1:
                     boolean isLogin = login();
-                    if (!isLogin)
-                        createAccount();
+//                    if (!isLogin)
+//                        createAccount();
                     break;
                 case 2:
                     createAccount();
@@ -67,7 +67,7 @@ public class Main {
             startChat(userName);
             return true;
         } else {
-            System.out.println("Couldn't find your account.");
+            System.out.println("Couldn't find your account or wrong password.");
             return false;
         }
     }
@@ -107,7 +107,7 @@ public class Main {
 
     private static void createAccount() throws IOException {
         // TODO: add authorization for new users
-        System.out.println("Created new account.");
+        System.out.println("New account created.");
         login();
     }
 }
