@@ -101,9 +101,8 @@ public class Main {
         conn.setRequestProperty("login", userName);
         conn.setRequestProperty("password", password);
 
-        if (conn.getHeaderField("session").equals("true")) {return true;}
-
-        return false;
+        return (conn.getHeaderField("login").equals("true"))
+                && (conn.getHeaderField("password").equals("true"));
     }
 
     private static void createAccount() throws IOException {
