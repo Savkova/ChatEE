@@ -9,6 +9,8 @@ public class Users {
     private final Map<String, User> userMap = new HashMap<>();
 
     private Users() {
+        // TODO: delete when authorization was done
+        userMap.put("user1", new User("user1", "qwerty"));
     }
 
     public static Users getInstance() {
