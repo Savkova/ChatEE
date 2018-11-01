@@ -21,11 +21,12 @@ public class LoginServlet extends HttpServlet {
             if (user.getPassword().equals(password)) {
                 HttpSession session = request.getSession(true);
                 session.setAttribute("user_login", login);
-                response.setHeader("session", "true");
-            } else {
+                response.setHeader("login", "true");
                 response.setHeader("password", "true");
+            } else {
+                response.setHeader("password", "false");
             }
         } else
-            response.setHeader("session", "false");
+            response.setHeader("login", "false");
     }
 }
