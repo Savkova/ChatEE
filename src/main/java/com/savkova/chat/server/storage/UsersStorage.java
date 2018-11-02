@@ -5,15 +5,15 @@ import com.savkova.chat.server.entities.User;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Users {
-    private static final Users USERS = new Users();
+public class UsersStorage {
+    private static final UsersStorage USERS = new UsersStorage();
 
     private final Map<String, User> userMap = new HashMap<>();
 
-    private Users() {
+    private UsersStorage() {
     }
 
-    public static Users getInstance() {
+    public static UsersStorage getInstance() {
         return USERS;
     }
 
