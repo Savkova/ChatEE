@@ -16,17 +16,16 @@ public class LoginServlet extends HttpServlet {
         String login = request.getHeader("login");
         String password = request.getHeader("password");
 
-        User user = Users.getInstance().getUser(login);
-        if (user != null) {
-            if (user.getPassword().equals(password)) {
+        if (VerifyUser.isLoginAlreadyUsed(login)) {
+            if (VerifyUser.isLoginPasswordCorrect(login, password)) {
                 HttpSession session = request.getSession(true);
                 session.setAttribute("user_login", login);
                 response.setHeader("login", "true");
                 response.setHeader("password", "true");
-            } else {
+            } else
                 response.setHeader("password", "false");
-            }
         } else
             response.setHeader("login", "false");
     }
+
 }
