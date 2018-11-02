@@ -13,21 +13,22 @@ public class Main {
         MenuOptions.show();
 
         try {
-            int actionNumber = askIdMenuOption();
-
-            switch (actionNumber) {
-                case 1:
-                    boolean isLogin = login();
-//                    if (!isLogin)
-//                        createAccount();
-                    break;
-                case 2:
-                    createAccount();
-                    login();
-                    break;
-                case 3:
-                    System.out.println("Quit");
-                    System.exit(0);
+            while (true) {
+                int actionNumber = askIdMenuOption();
+                switch (actionNumber) {
+                    case 1:
+                        login();
+                        break;
+                    case 2:
+                        createAccount();
+                        login();
+                        break;
+                    case 3:
+                        System.out.println("Bye!");
+                        System.exit(0);
+                    default:
+                        return;
+                }
             }
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -55,27 +56,12 @@ public class Main {
         return actionNumber;
     }
 
-    private static boolean login() throws IOException {
-        System.out.print("Enter your login: ");
-        String userName = scanner.nextLine();
-
-        System.out.print("Enter your password: ");
-        String password = scanner.nextLine();
-
-        boolean succeeded = verifyUser(userName, password);
-        if (succeeded) {
-            startChat(userName);
-            return true;
-        } else {
-            System.out.println("Couldn't find your account or wrong password.");
-            return false;
-        }
-    }
-
     private static void startChat(String userName) throws IOException {
         Thread th = new Thread(new GetThread());
         th.setDaemon(true);
         th.start();
+
+        System.out.println("\nLet's start!\n");
 
         System.out.println("Enter your message: ");
         while (true) {
@@ -94,7 +80,24 @@ public class Main {
         }
     }
 
-    private static boolean verifyUser(String userName, String password) throws IOException {
+    private static boolean login() throws IOException {
+        System.out.print("Enter your login: ");
+        String userName = scanner.nextLine();
+
+        System.out.print("Enter your password: ");
+        String password = scanner.nextLine();
+
+        boolean succeeded = isLogin(userName, password);
+        if (succeeded) {
+            startChat(userName);
+            return true;
+        } else {
+            System.out.println("Couldn't find your account or wrong password.");
+            return false;
+        }
+    }
+
+    private static boolean isLogin(String userName, String password) throws IOException {
         URL url = new URL(Utils.getURL() + "/chat/login");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
@@ -105,9 +108,36 @@ public class Main {
                 && (conn.getHeaderField("password").equals("true"));
     }
 
-    private static void createAccount() throws IOException {
-        // TODO: add authorization for new users
-        System.out.println("New account created.");
-        login();
+    private static boolean createAccount() throws IOException {
+
+        System.out.println("\nFor creating new account ");
+
+        System.out.print("enter your login: ");
+        String userName = scanner.nextLine();
+
+        System.out.print("enter your password: ");
+        String password = scanner.nextLine();
+
+        boolean succeeded = isAccountCreated(userName, password);
+        if (succeeded) {
+            System.out.println("New account created - login '"+userName+"'");
+            login();
+            return true;
+        } else {
+            System.out.println("That username is taken. Try another.");
+            createAccount();
+            return false;
+        }
+    }
+
+    private static boolean isAccountCreated(String userName, String password) throws IOException {
+
+        URL url = new URL(Utils.getURL() + "/chat/signup");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("login", userName);
+        conn.setRequestProperty("password", password);
+
+        return (conn.getHeaderField("account").equals("created"));
     }
 }
