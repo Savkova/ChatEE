@@ -1,4 +1,6 @@
-package com.savkova.chat.server;
+package com.savkova.chat.server.servlets;
+
+import com.savkova.chat.server.util.VerifyUser;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

@@ -1,9 +1,11 @@
-package com.savkova.chat.server;
+package com.savkova.chat.server.storage;
 
 import java.util.LinkedList;
 import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.savkova.chat.server.util.JsonMessages;
+import com.savkova.chat.server.entities.Message;
 
 public class MessageList {
 	private static final MessageList msgList = new MessageList();

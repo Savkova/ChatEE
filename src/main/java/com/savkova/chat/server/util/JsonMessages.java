@@ -1,4 +1,6 @@
-package com.savkova.chat.server;
+package com.savkova.chat.server.util;
+
+import com.savkova.chat.server.entities.Message;
 
 import java.util.ArrayList;
 import java.util.List;

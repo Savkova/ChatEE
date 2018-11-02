@@ -21,7 +21,6 @@ public class Main {
                         break;
                     case 2:
                         createAccount();
-                        login();
                         break;
                     case 3:
                         System.out.println("Bye!");
@@ -63,7 +62,7 @@ public class Main {
 
         System.out.println("\nLet's start!\n");
 
-        System.out.println("Enter your message: ");
+        System.out.println("Enter your message ('quit' for quit): ");
         while (true) {
             String text = scanner.nextLine();
             if (text.toLowerCase().equals("quit")) {
@@ -121,11 +120,9 @@ public class Main {
         boolean succeeded = isAccountCreated(userName, password);
         if (succeeded) {
             System.out.println("New account created - login '"+userName+"'");
-            login();
             return true;
         } else {
             System.out.println("That username is taken. Try another.");
-            createAccount();
             return false;
         }
     }
