@@ -1,4 +1,7 @@
-package com.savkova.chat.server;
+package com.savkova.chat.server.util;
+
+import com.savkova.chat.server.entities.User;
+import com.savkova.chat.server.storage.Users;
 
 public class VerifyUser {
 

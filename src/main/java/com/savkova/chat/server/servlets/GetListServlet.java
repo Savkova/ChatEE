@@ -1,4 +1,6 @@
-package com.savkova.chat.server;
+package com.savkova.chat.server.servlets;
+
+import com.savkova.chat.server.storage.MessageList;
 
 import java.io.IOException;
 import java.io.OutputStream;

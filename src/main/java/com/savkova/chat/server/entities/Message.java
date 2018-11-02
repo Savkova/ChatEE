@@ -1,4 +1,4 @@
-package com.savkova.chat.server;
+package com.savkova.chat.server.entities;
 
 import java.io.*;
 import java.net.HttpURLConnection;
