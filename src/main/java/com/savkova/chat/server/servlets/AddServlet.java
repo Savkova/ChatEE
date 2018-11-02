@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "Add", urlPatterns = "/add")
 public class AddServlet extends HttpServlet {
 
-	private MessageStorage msgList = MessageStorage.getInstance();
+	private MessageStorage messageStorage = MessageStorage.getInstance();
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -27,7 +27,7 @@ public class AddServlet extends HttpServlet {
 
 		Message msg = Message.fromJSON(bufStr);
 		if (msg != null)
-			msgList.add(msg, to);
+			messageStorage.add(msg, to);
 		else
 			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 	}

@@ -23,7 +23,8 @@ public class GetThread implements Runnable {
     @Override
     public void run() {
         try {
-            while ( ! Thread.interrupted()) {
+            while (!Thread.interrupted()) {
+                if (to == null) to = "all";
                 URL url = new URL(Utils.getURL() + "/chat/get?fromN=" + n + "&to=" + to);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 

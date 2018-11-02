@@ -4,6 +4,7 @@ import com.savkova.chat.server.storage.MessageStorage;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
 import javax.servlet.annotation.WebServlet;
@@ -13,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "GetList", urlPatterns = "/get")
 public class GetListServlet extends HttpServlet {
-	
+
 	private MessageStorage storage = MessageStorage.getInstance();
 
     @Override
@@ -30,15 +31,11 @@ public class GetListServlet extends HttpServlet {
 		}
 
 		resp.setContentType("application/json");
-		
+
 		String json = storage.toJSON(fromN, to);
 		if (json != null) {
-			OutputStream os = resp.getOutputStream();
-            byte[] buf = json.getBytes(StandardCharsets.UTF_8);
-			os.write(buf);
-
-//			PrintWriter pw = resp.getWriter();
-//			pw.print(json);
+			PrintWriter pw = resp.getWriter();
+			pw.print(json);
 		}
 	}
 }

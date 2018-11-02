@@ -36,8 +36,15 @@ public class MessageStorage {
     }
 
     public synchronized String toJSON(int n, String to) {
-        List<Message> list = map.get(to);
+        List<Message> list = null;
+        if (map.containsKey(to)) {
+            list= map.get(to);
+        }
+
+        if (list == null || list.isEmpty()) return "";
+
         if (n >= list.size()) return null;
+
         return gson.toJson(new JsonMessages(list, n));
     }
 }

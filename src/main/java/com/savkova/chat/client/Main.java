@@ -66,23 +66,26 @@ public class Main {
         commonThead.setDaemon(true);
         commonThead.start();
 
+        Thread privateThread = new Thread(new GetThread(userName));
+        privateThread.setDaemon(true);
+        privateThread.start();
+
         System.out.println("\nLet's start!\n");
 
         System.out.println("Enter your message ('stop' to main menu): ");
         while (true) {
             String text = scanner.nextLine();
             if (text.toLowerCase().equals("stop")) {
+                commonThead.interrupt();
+                privateThread.interrupt();
                 break;
             }
 
             if ((text.startsWith("@")) && (text.contains(":"))) {
                 to = text.substring(1, text.indexOf(":"));
                 text = text.substring(text.indexOf(":"));
-/*
-                Thread privateThread = new Thread(new GetThread(to));
-                privateThread.setDaemon(true);
-                privateThread.start();*/
-            }
+            } else
+                to = "all";
 
             Message m = new Message(userName, text, to);
             int res = m.send(Utils.getURL() + "/chat/add?to=" + to);
