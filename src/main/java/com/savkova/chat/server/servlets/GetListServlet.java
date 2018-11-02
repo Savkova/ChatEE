@@ -3,9 +3,7 @@ package com.savkova.chat.server.servlets;
 import com.savkova.chat.server.storage.MessageStorage;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
