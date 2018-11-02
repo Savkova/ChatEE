@@ -13,19 +13,21 @@ import java.nio.charset.StandardCharsets;
 public class GetThread implements Runnable {
     private final Gson gson;
     private int n;
+    private String to;
 
-    public GetThread() {
+    public GetThread(String to) {
         gson = new GsonBuilder().create();
+        this.to = to;
     }
 
     @Override
     public void run() {
         try {
             while ( ! Thread.interrupted()) {
-                URL url = new URL(Utils.getURL() + "/chat/get?from=" + n);
-                HttpURLConnection http = (HttpURLConnection) url.openConnection();
+                URL url = new URL(Utils.getURL() + "/chat/get?fromN=" + n + "&to=" + to);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-                InputStream is = http.getInputStream();
+                InputStream is = conn.getInputStream();
                 try {
                     byte[] buf = requestBodyToArray(is);
                     String strBuf = new String(buf, StandardCharsets.UTF_8);
@@ -59,5 +61,9 @@ public class GetThread implements Runnable {
         } while (r != -1);
 
         return bos.toByteArray();
+    }
+
+    public void setTo(String to) {
+        this.to = to;
     }
 }

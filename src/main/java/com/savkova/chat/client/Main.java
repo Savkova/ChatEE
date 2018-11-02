@@ -23,6 +23,9 @@ public class Main {
                         createAccount();
                         break;
                     case 3:
+                        logout();
+                        break;
+                    case 4:
                         System.out.println("Bye!");
                         // TODO: close session
                         System.exit(0);
@@ -57,9 +60,11 @@ public class Main {
     }
 
     private static void startChat(String userName) throws IOException {
-        Thread th = new Thread(new GetThread());
-        th.setDaemon(true);
-        th.start();
+        String to = "all";
+
+        Thread commonThead = new Thread(new GetThread(to));
+        commonThead.setDaemon(true);
+        commonThead.start();
 
         System.out.println("\nLet's start!\n");
 
@@ -70,14 +75,17 @@ public class Main {
                 break;
             }
 
-            String to = "all";
-            if ((text.startsWith("pm@"))&&(text.contains(":"))) {
-                to = text.substring(3, text.indexOf(":"));
+            if ((text.startsWith("@")) && (text.contains(":"))) {
+                to = text.substring(1, text.indexOf(":"));
                 text = text.substring(text.indexOf(":"));
+/*
+                Thread privateThread = new Thread(new GetThread(to));
+                privateThread.setDaemon(true);
+                privateThread.start();*/
             }
 
             Message m = new Message(userName, text, to);
-            int res = m.send(Utils.getURL() + "/chat/add");
+            int res = m.send(Utils.getURL() + "/chat/add?to=" + to);
 
             if (res != 200) { // 200 OK
                 System.out.println("HTTP error occured: " + res);
@@ -144,4 +152,9 @@ public class Main {
 
         return (conn.getHeaderField("account").equals("created"));
     }
+
+    private static void logout() {
+        //TODO logout
+    }
+
 }

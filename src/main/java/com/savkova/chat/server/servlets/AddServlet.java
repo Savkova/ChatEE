@@ -1,7 +1,7 @@
 package com.savkova.chat.server.servlets;
 
 import com.savkova.chat.server.entities.Message;
-import com.savkova.chat.server.storage.MessageList;
+import com.savkova.chat.server.storage.MessageStorage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -16,16 +16,18 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "Add", urlPatterns = "/add")
 public class AddServlet extends HttpServlet {
 
-	private MessageList msgList = MessageList.getInstance();
+	private MessageStorage msgList = MessageStorage.getInstance();
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		byte[] buf = requestBodyToArray(req);
         String bufStr = new String(buf, StandardCharsets.UTF_8);
 
+        String to = req.getParameter("to");
+
 		Message msg = Message.fromJSON(bufStr);
 		if (msg != null)
-			msgList.add(msg);
+			msgList.add(msg, to);
 		else
 			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 	}
