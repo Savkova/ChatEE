@@ -1,5 +1,6 @@
 package com.savkova.chat.server.servlets;
 
+import com.savkova.chat.client.Utils;
 import com.savkova.chat.server.util.VerifyUser;
 
 import javax.servlet.ServletException;
@@ -15,19 +16,19 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String login = request.getHeader("login");
-        String password = request.getHeader("password");
+        String login = request.getHeader(Utils.LOGIN);
+        String password = request.getHeader(Utils.PASS);
 
         if (VerifyUser.isLoginAlreadyUsed(login)) {
             if (VerifyUser.isLoginPasswordCorrect(login, password)) {
                 HttpSession session = request.getSession(true);
-                session.setAttribute("user_login", login);
-                response.setHeader("login", "true");
-                response.setHeader("password", "true");
+                session.setAttribute(Utils.LOGIN, login);
+                response.setHeader(Utils.LOGIN, "true");
+                response.setHeader(Utils.PASS, "true");
             } else
-                response.setHeader("password", "false");
+                response.setHeader(Utils.PASS, "false");
         } else
-            response.setHeader("login", "false");
+            response.setHeader(Utils.LOGIN, "false");
     }
 
 }

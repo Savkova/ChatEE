@@ -15,6 +15,8 @@ public class GetThread implements Runnable {
     private int n;
     private String to;
 
+    private static boolean isStop;
+
     public GetThread(String to) {
         gson = new GsonBuilder().create();
         this.to = to;
@@ -23,8 +25,7 @@ public class GetThread implements Runnable {
     @Override
     public void run() {
         try {
-            while (!Thread.interrupted()) {
-                if (to == null) to = "all";
+            while ( ! isStop) {
                 URL url = new URL(Utils.getURL() + "/chat/get?fromN=" + n + "&to=" + to);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
@@ -47,6 +48,7 @@ public class GetThread implements Runnable {
                 Thread.sleep(500);
             }
         } catch (Exception ex) {
+            Thread.currentThread().interrupt();
             ex.printStackTrace();
         }
     }
@@ -64,7 +66,7 @@ public class GetThread implements Runnable {
         return bos.toByteArray();
     }
 
-    public void setTo(String to) {
-        this.to = to;
+    public static void stopThreads(boolean marker){
+        isStop = marker;
     }
 }

@@ -5,7 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
 
-public class Main {
+public class StartClient {
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -27,7 +27,6 @@ public class Main {
                         break;
                     case 4:
                         System.out.println("Bye!");
-                        // TODO: close session
                         System.exit(0);
                     default:
                         return;
@@ -60,15 +59,9 @@ public class Main {
     }
 
     private static void startChat(String userName) throws IOException {
-        String to = "all";
+        String all = "all";
 
-        Thread commonThead = new Thread(new GetThread(to));
-        commonThead.setDaemon(true);
-        commonThead.start();
-
-        Thread privateThread = new Thread(new GetThread(userName));
-        privateThread.setDaemon(true);
-        privateThread.start();
+        startThreads(all, userName);
 
         System.out.println("\nLet's start!\n");
 
@@ -76,14 +69,18 @@ public class Main {
         while (true) {
             String text = scanner.nextLine();
             if (text.toLowerCase().equals("stop")) {
-                commonThead.interrupt();
-                privateThread.interrupt();
+                GetThread.stopThreads(true);
                 break;
             }
 
-            if ((text.startsWith("@")) && (text.contains(":"))) {
-                to = text.substring(1, text.indexOf(":"));
-                text = text.substring(text.indexOf(":"));
+            String privateMessageMarker = "@";
+            String delimeter = ":";
+            String to;
+            if ((text.startsWith(privateMessageMarker)) && (text.contains(delimeter))) {
+                to = text.substring(1, text.indexOf(delimeter));
+                text = text.substring(text.indexOf(delimeter));
+                Message m = new Message(userName, text, to);
+                System.out.println(m);
             } else
                 to = "all";
 
@@ -97,7 +94,18 @@ public class Main {
         }
     }
 
-    private static boolean login() throws IOException {
+    private static void startThreads(String... values) {
+        GetThread.stopThreads(false);
+
+        for (String to : values) {
+            Thread th = new Thread(new GetThread(to));
+            th.setDaemon(true);
+            th.start();
+        }
+
+    }
+
+    private static void login() throws IOException {
         System.out.print("Enter your login: ");
         String userName = scanner.nextLine();
 
@@ -107,10 +115,8 @@ public class Main {
         boolean succeeded = isLogin(userName, password);
         if (succeeded) {
             startChat(userName);
-            return true;
         } else {
             System.out.println("Couldn't find your account or wrong password.");
-            return false;
         }
     }
 
@@ -125,7 +131,7 @@ public class Main {
                 && (conn.getHeaderField("password").equals("true"));
     }
 
-    private static boolean createAccount() throws IOException {
+    private static void createAccount() throws IOException {
 
         System.out.println("\nFor creating new account ");
 
@@ -138,10 +144,8 @@ public class Main {
         boolean succeeded = isAccountCreated(userName, password);
         if (succeeded) {
             System.out.println("New account created - login '" + userName + "'");
-            return true;
         } else {
             System.out.println("That username is taken. Try another.");
-            return false;
         }
     }
 
@@ -157,6 +161,7 @@ public class Main {
     }
 
     private static void logout() {
+        // TODO: close session
         //TODO logout
     }
 
