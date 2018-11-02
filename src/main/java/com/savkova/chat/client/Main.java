@@ -24,6 +24,7 @@ public class Main {
                         break;
                     case 3:
                         System.out.println("Bye!");
+                        // TODO: close session
                         System.exit(0);
                     default:
                         return;
@@ -62,14 +63,20 @@ public class Main {
 
         System.out.println("\nLet's start!\n");
 
-        System.out.println("Enter your message ('quit' for quit): ");
+        System.out.println("Enter your message ('stop' to main menu): ");
         while (true) {
             String text = scanner.nextLine();
-            if (text.toLowerCase().equals("quit")) {
-                System.exit(0);
+            if (text.toLowerCase().equals("stop")) {
+                break;
             }
 
-            Message m = new Message(userName, text);
+            String to = "all";
+            if ((text.startsWith("pm@"))&&(text.contains(":"))) {
+                to = text.substring(3, text.indexOf(":"));
+                text = text.substring(text.indexOf(":"));
+            }
+
+            Message m = new Message(userName, text, to);
             int res = m.send(Utils.getURL() + "/chat/add");
 
             if (res != 200) { // 200 OK
@@ -119,7 +126,7 @@ public class Main {
 
         boolean succeeded = isAccountCreated(userName, password);
         if (succeeded) {
-            System.out.println("New account created - login '"+userName+"'");
+            System.out.println("New account created - login '" + userName + "'");
             return true;
         } else {
             System.out.println("That username is taken. Try another.");
