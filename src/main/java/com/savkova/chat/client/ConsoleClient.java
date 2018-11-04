@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 import static com.savkova.chat.client.Utils.*;
 
-public class StartClient {
+public class ConsoleClient {
     private static Scanner scanner = new Scanner(System.in);
     private static String sessionId;
 
@@ -26,6 +26,9 @@ public class StartClient {
                         login();
                         break;
                     case 3:
+                        showAllUsers();
+                        break;
+                    case 4:
                         System.out.println("Bye!");
                         System.exit(0);
                     default:
@@ -171,6 +174,14 @@ public class StartClient {
         conn.getHeaderField("session_status");
         System.out.println("'" + userName + "' has been logged out.");
         sessionId = null;
+    }
+
+    private static void showAllUsers() throws IOException {
+        URL get = new URL(Utils.getURL() + "/chat/users");
+        HttpURLConnection conn = (HttpURLConnection) get.openConnection();
+        conn.setRequestMethod("GET");
+
+        System.out.println(conn.getResponseMessage());
     }
 
 }
