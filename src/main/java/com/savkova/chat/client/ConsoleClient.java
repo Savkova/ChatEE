@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 import static com.savkova.chat.client.Utils.*;
 
-public class StartClient {
+public class ConsoleClient {
     private static Scanner scanner = new Scanner(System.in);
     private static String sessionId;
 
