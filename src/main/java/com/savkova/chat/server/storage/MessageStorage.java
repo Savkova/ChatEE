@@ -10,6 +10,8 @@ import com.google.gson.GsonBuilder;
 import com.savkova.chat.server.util.JsonMessages;
 import com.savkova.chat.server.entities.Message;
 
+import static com.savkova.chat.server.util.Properties.ALL;
+
 public class MessageStorage {
     private static final MessageStorage messageStorage = new MessageStorage();
 
@@ -22,7 +24,7 @@ public class MessageStorage {
 
     private MessageStorage() {
         gson = new GsonBuilder().create();
-        map.put("all", new LinkedList<Message>());
+        map.put(ALL, new LinkedList<Message>());
     }
 
     public synchronized void add(Message m, String to) {

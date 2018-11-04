@@ -8,5 +8,6 @@ public class Properties {
 
     public static final String ACTION = "action";
     public static final String STOP = "stop";
+    public static final String ALL = "all";
 
 }
