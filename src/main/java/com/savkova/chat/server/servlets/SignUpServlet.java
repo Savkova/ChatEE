@@ -1,6 +1,5 @@
 package com.savkova.chat.server.servlets;
 
-import com.savkova.chat.client.Utils;
 import com.savkova.chat.server.entities.User;
 import com.savkova.chat.server.storage.UsersStorage;
 import com.savkova.chat.server.util.VerifyUser;
@@ -12,20 +11,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.savkova.chat.server.util.Properties.*;
+
 @WebServlet(name = "SignUp", urlPatterns = "/signup")
 public class SignUpServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String login = request.getHeader(Utils.LOGIN);
+        String login = request.getHeader(LOGIN);
 
         if (VerifyUser.isLoginAlreadyUsed(login)) {
-            response.setHeader(Utils.ACCOUNT, "already exist");
+            response.setHeader(ACCOUNT, "already exist");
         } else {
-            String password = request.getHeader(Utils.PASS);
+            String password = request.getHeader(PASS);
             UsersStorage.getInstance().add(new User(login, password));
-            response.setHeader(Utils.ACCOUNT, "created");
+            response.setHeader(ACCOUNT, "created");
         }
     }
 

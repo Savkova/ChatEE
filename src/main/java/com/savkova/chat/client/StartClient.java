@@ -5,6 +5,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
 
+import static com.savkova.chat.client.Utils.*;
+
 public class StartClient {
     private static Scanner scanner = new Scanner(System.in);
 
@@ -17,15 +19,12 @@ public class StartClient {
                 int actionNumber = askIdMenuOption();
                 switch (actionNumber) {
                     case 1:
-                        login();
-                        break;
-                    case 2:
                         createAccount();
                         break;
-                    case 3:
-                        logout();
+                    case 2:
+                        login();
                         break;
-                    case 4:
+                    case 3:
                         System.out.println("Bye!");
                         System.exit(0);
                     default:
@@ -59,33 +58,32 @@ public class StartClient {
     }
 
     private static void startChat(String userName) throws IOException {
-        String all = "all";
 
-        startThreads(all, userName);
+        startThreads(ALL, userName);
 
         System.out.println("\nLet's start!\n");
 
-        System.out.println("Enter your message ('stop' to main menu): ");
+        System.out.println("Enter your message ('" + STOP + "' for log out): ");
         while (true) {
             String text = scanner.nextLine();
-            if (text.toLowerCase().equals("stop")) {
+            if (text.toLowerCase().equals(STOP)) {
+                logout(userName);
                 GetThread.stopThreads(true);
                 break;
             }
 
-            String privateMessageMarker = "@";
-            String delimeter = ":";
             String to;
-            if ((text.startsWith(privateMessageMarker)) && (text.contains(delimeter))) {
-                to = text.substring(1, text.indexOf(delimeter));
-                text = text.substring(text.indexOf(delimeter));
-                Message m = new Message(userName, text, to);
-                System.out.println(m);
+            Message message;
+            if ((text.startsWith(privateMessageMarker)) && (text.contains(delimiter))) {
+                to = text.substring(1, text.indexOf(delimiter));
+                text = text.substring(text.indexOf(delimiter));
+                message = new Message(userName, text, to);
+                System.out.println(message);
             } else
-                to = "all";
+                to = ALL;
 
-            Message m = new Message(userName, text, to);
-            int res = m.send(Utils.getURL() + "/chat/add?to=" + to);
+            message = new Message(userName, text, to);
+            int res = message.send(Utils.getURL() + "/chat/add?to=" + to);
 
             if (res != 200) { // 200 OK
                 System.out.println("HTTP error occured: " + res);
@@ -106,6 +104,7 @@ public class StartClient {
     }
 
     private static void login() throws IOException {
+
         System.out.print("Enter your login: ");
         String userName = scanner.nextLine();
 
@@ -154,10 +153,10 @@ public class StartClient {
         URL url = new URL(Utils.getURL() + "/chat/signup");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
-        conn.setRequestProperty("login", userName);
-        conn.setRequestProperty("password", password);
+        conn.setRequestProperty(LOGIN, userName);
+        conn.setRequestProperty(PASS, password);
 
-        return (conn.getHeaderField("account").equals("created"));
+        return (conn.getHeaderField(ACCOUNT).equals("created"));
     }
 
     private static void logout() {
