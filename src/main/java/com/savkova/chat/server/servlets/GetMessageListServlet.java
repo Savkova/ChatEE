@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "GetList", urlPatterns = "/get")
-public class GetListServlet extends HttpServlet {
+public class GetMessageListServlet extends HttpServlet {
 
 	private MessageStorage storage = MessageStorage.getInstance();
 
