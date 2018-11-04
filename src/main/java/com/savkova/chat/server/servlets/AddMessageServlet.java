@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "Add", urlPatterns = "/add")
-public class AddServlet extends HttpServlet {
+public class AddMessageServlet extends HttpServlet {
 
 	private MessageStorage messageStorage = MessageStorage.getInstance();
 
