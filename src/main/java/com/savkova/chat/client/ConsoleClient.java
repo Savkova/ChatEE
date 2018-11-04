@@ -176,8 +176,12 @@ public class ConsoleClient {
         sessionId = null;
     }
 
-    private static void showAllUsers() {
-    // TODO
+    private static void showAllUsers() throws IOException {
+        URL get = new URL(Utils.getURL() + "/chat/users");
+        HttpURLConnection conn = (HttpURLConnection) get.openConnection();
+        conn.setRequestMethod("GET");
+
+        System.out.println(conn.getResponseMessage());
     }
 
 }
