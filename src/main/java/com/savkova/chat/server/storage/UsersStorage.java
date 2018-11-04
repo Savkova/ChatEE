@@ -2,7 +2,9 @@ package com.savkova.chat.server.storage;
 
 import com.savkova.chat.server.entities.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UsersStorage {
@@ -27,4 +29,15 @@ public class UsersStorage {
 
         return null;
     }
+
+    public synchronized List<User> getAllUsers() {
+
+        List<User> list = new ArrayList<>();
+        for (Map.Entry<String, User> entry : userMap.entrySet()) {
+            list.add(entry.getValue());
+        }
+
+        return list;
+    }
+
 }

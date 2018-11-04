@@ -23,7 +23,7 @@ public class LogOutServlet extends HttpServlet {
         if (action.equals(STOP)) {
             session = request.getSession(false);
             if (session != null) session.invalidate();
-            response.setHeader("session_status", "Session have been destroyed.");
+            response.setHeader("session_status", "'" + login + "' session have been destroyed.");
             return;
         }
 
