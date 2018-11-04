@@ -1,10 +1,9 @@
 package com.savkova.chat.client;
 
 public enum MenuOptions {
-    logIn(1, "Log In"),
-    signUp(2, "Sign Up"),
-    logOut(3, "Log Out"),
-    quit(4, "Quit");
+    signUp(1, "Sign Up"),
+    logIn(2, "Log In"),
+    quit(3, "Quit");
 
     private int id;
     private String name;
