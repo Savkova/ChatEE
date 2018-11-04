@@ -10,14 +10,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-public class GetThread implements Runnable {
+public class GetMessagesThread implements Runnable {
     private final Gson gson;
     private int n;
     private String to;
 
     private static boolean isStop;
 
-    public GetThread(String to) {
+    public GetMessagesThread(String to) {
         gson = new GsonBuilder().create();
         this.to = to;
     }

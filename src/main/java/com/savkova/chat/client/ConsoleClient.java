@@ -1,6 +1,8 @@
 package com.savkova.chat.client;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
@@ -72,7 +74,7 @@ public class ConsoleClient {
             String text = scanner.nextLine();
             if (text.toLowerCase().equals(STOP)) {
                 logout(userName);
-                GetThread.stopThreads(true);
+                GetMessagesThread.stopThreads(true);
                 break;
             }
 
@@ -97,10 +99,10 @@ public class ConsoleClient {
     }
 
     private static void startThreads(String... values) {
-        GetThread.stopThreads(false);
+        GetMessagesThread.stopThreads(false);
 
         for (String to : values) {
-            Thread th = new Thread(new GetThread(to));
+            Thread th = new Thread(new GetMessagesThread(to));
             th.setDaemon(true);
             th.start();
         }
@@ -181,7 +183,16 @@ public class ConsoleClient {
         HttpURLConnection conn = (HttpURLConnection) get.openConnection();
         conn.setRequestMethod("GET");
 
-        System.out.println(conn.getResponseMessage());
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String inputLine;
+        StringBuffer result = new StringBuffer();
+
+        while ((inputLine = in.readLine()) != null) {
+            result.append(inputLine);
+        }
+        in.close();
+
+        System.out.println(result.toString());
     }
 
 }
