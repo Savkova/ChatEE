@@ -9,6 +9,7 @@ import static com.savkova.chat.client.Utils.*;
 
 public class StartClient {
     private static Scanner scanner = new Scanner(System.in);
+    private static String sessionId;
 
     public static void main(String[] args) {
         System.out.println("Welcome to ChatEE!");
@@ -123,11 +124,12 @@ public class StartClient {
         URL url = new URL(Utils.getURL() + "/chat/login");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
-        conn.setRequestProperty("login", userName);
-        conn.setRequestProperty("password", password);
+        conn.setRequestProperty(LOGIN, userName);
+        conn.setRequestProperty(PASS, password);
+        sessionId = conn.getHeaderField("Set-Cookie");
 
-        return (conn.getHeaderField("login").equals("true"))
-                && (conn.getHeaderField("password").equals("true"));
+        return (conn.getHeaderField(LOGIN).equals("true"))
+                && (conn.getHeaderField(PASS).equals("true"));
     }
 
     private static void createAccount() throws IOException {
@@ -159,9 +161,16 @@ public class StartClient {
         return (conn.getHeaderField(ACCOUNT).equals("created"));
     }
 
-    private static void logout() {
-        // TODO: close session
-        //TODO logout
+    private static void logout(String userName) throws IOException {
+
+        URL get = new URL(Utils.getURL() + "/chat/logout?login=" + userName + "&action=" + STOP);
+        HttpURLConnection conn = (HttpURLConnection) get.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("Cookie", sessionId.substring(0, sessionId.indexOf(";")));
+
+        conn.getHeaderField("session_status");
+        System.out.println("'" + userName + "' has been logged out.");
+        sessionId = null;
     }
 
 }
