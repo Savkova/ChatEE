@@ -82,7 +82,7 @@ public class ConsoleClient {
             Message message;
             if ((text.startsWith(privateMessageMarker)) && (text.contains(delimiter))) {
                 to = text.substring(1, text.indexOf(delimiter));
-                text = text.substring(text.indexOf(delimiter));
+                text = text.substring(text.indexOf(delimiter) + 1).trim();
                 message = new Message(userName, text, to);
                 System.out.println(message);
             } else
@@ -192,7 +192,7 @@ public class ConsoleClient {
         }
         in.close();
 
-        System.out.println(result.toString());
+        System.out.println("All users: " + result.toString());
     }
 
 }
