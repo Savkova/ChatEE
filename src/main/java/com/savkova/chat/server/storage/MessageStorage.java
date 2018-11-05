@@ -24,7 +24,7 @@ public class MessageStorage {
 
     private MessageStorage() {
         gson = new GsonBuilder().create();
-        map.put(ALL, new LinkedList<Message>());
+        map.put(ALL, new LinkedList<>());
     }
 
     public synchronized void add(Message m, String to) {
@@ -37,16 +37,20 @@ public class MessageStorage {
         }
     }
 
-    public synchronized String toJSON(int n, String to) {
+    public synchronized String toJSON(String to) {
         List<Message> list = null;
         if (map.containsKey(to)) {
-            list= map.get(to);
+            list = map.get(to);
         }
 
         if (list == null || list.isEmpty()) return "";
 
-        if (n >= list.size()) return null;
-
-        return gson.toJson(new JsonMessages(list, n));
+        return gson.toJson(new JsonMessages(list));
     }
+
+    public void addRoom(String room) {
+        if (!map.containsKey(room))
+            map.put(room, new LinkedList<>());
+    }
+
 }

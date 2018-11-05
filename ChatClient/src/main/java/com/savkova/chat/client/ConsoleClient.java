@@ -22,14 +22,11 @@ public class ConsoleClient {
                 int actionNumber = askIdMenuOption();
                 switch (actionNumber) {
                     case 1:
-                        createAccount();
-                        break;
+                        createAccount(); break;
                     case 2:
-                        login();
-                        break;
+                        login(); break;
                     case 3:
-                        showAllUsers();
-                        break;
+                        showAllUsers(); break;
                     case 4:
                         System.out.println("Bye!");
                         System.exit(0);
@@ -64,49 +61,60 @@ public class ConsoleClient {
     }
 
     private static void startChat(String userName) throws IOException {
-
-        startThreads(ALL, userName);
+        Thread th = new Thread(new GetMessagesThread(userName));
+        th.setDaemon(true);
+        th.start();
 
         System.out.println("\nLet's start!\n");
+        System.out.println("'" + privateMessageMarker + "login" + delimiter + " ...'" + " for private message");
+        System.out.println("'" + privateMessageMarker + "room" + delimiter + " ...'" + " for room message");
+        System.out.println("'" + JOIN + " room' for join room");
+        System.out.println("'" + EXIT + " room' for exit room");
+        System.out.println("'" + STOP + "' for log out");
 
-        System.out.println("Enter your message ('" + STOP + "' for log out): ");
+        System.out.println("\nEnter your message : ");
         while (true) {
             String text = scanner.nextLine();
             if (text.toLowerCase().equals(STOP)) {
                 logout(userName);
-                GetMessagesThread.stopThreads(true);
+                GetMessagesThread.stopThread(true);
                 break;
             }
 
-            String to;
-            Message message;
-            if ((text.startsWith(privateMessageMarker)) && (text.contains(delimiter))) {
-                to = text.substring(1, text.indexOf(delimiter));
-                text = text.substring(text.indexOf(delimiter));
-                message = new Message(userName, text, to);
-                System.out.println(message);
-            } else
-                to = ALL;
+            if (text.toLowerCase().startsWith(JOIN)) {
+                String room = text.substring(JOIN.length()).trim();
+                joinExitRoom(userName, room, "join");
+                System.out.println("You joined to '" + room + "'. For leaving - '" + EXIT + " " + room + "'");
+                continue;
+            }
 
-            message = new Message(userName, text, to);
-            int res = message.send(Utils.getURL() + "/chat/add?to=" + to);
+            if (text.toLowerCase().startsWith(EXIT)) {
+                String room = text.substring(JOIN.length()).trim();
+                joinExitRoom(userName, room, "exit");
+                System.out.println("You leaved '" + room + "'");
+                continue;
+            }
+
+            Message message = new Message(userName, text);
+            int res = message.send(Utils.getURL() + "/chat/add?to=" + message.getTo());
 
             if (res != 200) { // 200 OK
-                System.out.println("HTTP error occured: " + res);
+                System.out.println("HTTP error occurred: " + res);
                 return;
             }
         }
     }
 
-    private static void startThreads(String... values) {
-        GetMessagesThread.stopThreads(false);
+    private static void joinExitRoom(String userName, String room, String action) throws IOException {
+        String request = new StringBuilder().append(Utils.getURL()).append("/chat/user")
+                .append("?").append("login=").append(userName)
+                .append("&").append("room=").append(room)
+                .append("&").append("action=").append(action).toString();
 
-        for (String to : values) {
-            Thread th = new Thread(new GetMessagesThread(to));
-            th.setDaemon(true);
-            th.start();
-        }
-
+        URL get = new URL(request);
+        HttpURLConnection conn = (HttpURLConnection) get.openConnection();
+        conn.setRequestMethod("GET");
+        conn.getResponseMessage();
     }
 
     private static void login() throws IOException {
@@ -175,6 +183,7 @@ public class ConsoleClient {
 
         conn.getHeaderField("session_status");
         System.out.println("'" + userName + "' has been logged out.");
+
         sessionId = null;
     }
 
@@ -192,7 +201,7 @@ public class ConsoleClient {
         }
         in.close();
 
-        System.out.println(result.toString());
+        System.out.println("All users: " + result.toString());
     }
 
 }

@@ -22,11 +22,11 @@ public class GetAllUsersServlet extends HttpServlet {
         List<User> users = UsersStorage.getInstance().getAllUsers();
 
         List<String> names = new ArrayList<>();
-        for (User user:users             ) {
+        for (User user : users) {
             names.add(user.getName());
         }
 
-        PrintWriter pw =  response.getWriter();
+        PrintWriter pw = response.getWriter();
         pw.print(names);
 
     }

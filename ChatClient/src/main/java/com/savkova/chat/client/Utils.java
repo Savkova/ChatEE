@@ -9,8 +9,11 @@ public class Utils {
     public static final String PASS = "password";
 
     public static final String ALL = "all";
-    public static final String STOP = "stop";
+    public static final String STOP = "#stop";
+    public static final String JOIN = "#join";
+    public static final String EXIT = "#exit";
     public static final String privateMessageMarker = "@";
+    public static final String roomMessageMarker = "$";
     public static final String delimiter = ":";
 
 
