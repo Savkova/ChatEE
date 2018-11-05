@@ -54,7 +54,6 @@ public class ConsoleClient {
                 System.out.println("Invalid input. Select a number from 1 to " + menuLength + ": ");
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Try again: ");
-                continue;
             }
         }
         return actionNumber;
@@ -66,31 +65,32 @@ public class ConsoleClient {
         th.start();
 
         System.out.println("\nLet's start!\n");
-        System.out.println("'" + privateMessageMarker + "login" + delimiter + " ...'" + " for private message");
+        System.out.println("'" + privateMessageMarker + "name" + delimiter + " ...'" + " for private message");
         System.out.println("'" + privateMessageMarker + "room" + delimiter + " ...'" + " for room message");
-        System.out.println("'" + JOIN + " room' for join room");
-        System.out.println("'" + EXIT + " room' for exit room");
-        System.out.println("'" + STOP + "' for log out");
+        System.out.println("'" + actionMarker + JOIN + " room' for join room");
+        System.out.println("'" + actionMarker + LEAVE + " room' for leave room");
+        System.out.println("'" + actionMarker + LOGOUT + "' for log out");
 
         System.out.println("\nEnter your message : ");
         while (true) {
             String text = scanner.nextLine();
-            if (text.toLowerCase().equals(STOP)) {
+            if (text.toLowerCase().equals(actionMarker + LOGOUT)) {
                 logout(userName);
                 GetMessagesThread.stopThread(true);
                 break;
             }
 
-            if (text.toLowerCase().startsWith(JOIN)) {
-                String room = text.substring(JOIN.length()).trim();
-                joinExitRoom(userName, room, "join");
-                System.out.println("You joined to '" + room + "'. For leaving - '" + EXIT + " " + room + "'");
+            if (text.toLowerCase().startsWith(actionMarker + JOIN)) {
+                String room = text.substring(actionMarker.length() + JOIN.length()).trim();
+                joinExitRoom(userName, room, JOIN);
+                System.out.print("You joined to '" + room + "'. ");
+                System.out.println("For leaving - '" + actionMarker + LEAVE + " " + room + "'");
                 continue;
             }
 
-            if (text.toLowerCase().startsWith(EXIT)) {
-                String room = text.substring(JOIN.length()).trim();
-                joinExitRoom(userName, room, "exit");
+            if (text.toLowerCase().startsWith(actionMarker + LEAVE)) {
+                String room = text.substring(actionMarker.length() + LEAVE.length()).trim();
+                joinExitRoom(userName, room, LEAVE);
                 System.out.println("You leaved '" + room + "'");
                 continue;
             }
@@ -114,7 +114,7 @@ public class ConsoleClient {
         URL get = new URL(request);
         HttpURLConnection conn = (HttpURLConnection) get.openConnection();
         conn.setRequestMethod("GET");
-        conn.getResponseMessage();
+        conn.connect();
     }
 
     private static void login() throws IOException {
@@ -139,6 +139,8 @@ public class ConsoleClient {
         conn.setRequestMethod("GET");
         conn.setRequestProperty(LOGIN, userName);
         conn.setRequestProperty(PASS, password);
+        conn.connect();
+
         sessionId = conn.getHeaderField("Set-Cookie");
 
         return (conn.getHeaderField(LOGIN).equals("true"))
@@ -170,18 +172,20 @@ public class ConsoleClient {
         conn.setRequestMethod("GET");
         conn.setRequestProperty(LOGIN, userName);
         conn.setRequestProperty(PASS, password);
+        conn.connect();
 
         return (conn.getHeaderField(ACCOUNT).equals("created"));
     }
 
     private static void logout(String userName) throws IOException {
 
-        URL get = new URL(Utils.getURL() + "/chat/logout?login=" + userName + "&action=" + STOP);
+        URL get = new URL(Utils.getURL() + "/chat/logout?login=" + userName + "&action=" + LOGOUT);
         HttpURLConnection conn = (HttpURLConnection) get.openConnection();
         conn.setRequestMethod("GET");
-        conn.setRequestProperty("Cookie", sessionId.substring(0, sessionId.indexOf(";")));
+        conn.setRequestProperty("Cookie", sessionId);
+        conn.connect();
 
-        conn.getHeaderField("session_status");
+        System.out.println(conn.getHeaderField("session_status"));
         System.out.println("'" + userName + "' has been logged out.");
 
         sessionId = null;

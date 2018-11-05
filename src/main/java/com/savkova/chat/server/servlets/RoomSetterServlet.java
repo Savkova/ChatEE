@@ -30,7 +30,7 @@ public class RoomSetterServlet extends HttpServlet {
         if (action.equals(JOIN))
             user.addRoom(room);
 
-        if (action.equals(EXIT))
+        if (action.equals(LEAVE))
             user.removeRoom(room);
     }
 }
