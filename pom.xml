@@ -13,6 +13,10 @@
         <java.compiler.target>1.8</java.compiler.target>
     </properties>
 
+    <modules>
+        <module>ChatClient</module>
+    </modules>
+
     <dependencies>
 
         <!-- Servlet dependency -->
