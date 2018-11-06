@@ -1,5 +1,8 @@
 package com.savkova.chat.server.servlets;
 
+import com.savkova.chat.server.entities.User;
+import com.savkova.chat.server.storage.UsersStorage;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -24,6 +27,10 @@ public class LogOutServlet extends HttpServlet {
             session = request.getSession(false);
             if (session != null) session.invalidate();
             response.setHeader("session_status", "'" + login + "' session has been destroyed.");
+
+            User user = UsersStorage.getInstance().getUser(login);
+            user.setStatus(false);
+
             return;
         }
 

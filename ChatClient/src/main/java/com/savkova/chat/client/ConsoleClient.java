@@ -1,11 +1,10 @@
 package com.savkova.chat.client;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import static com.savkova.chat.client.Utils.*;
 
@@ -107,12 +106,13 @@ public class ConsoleClient {
     }
 
     private static void joinExitRoom(String userName, String room, String action) throws IOException {
-        String request = new StringBuilder().append(Utils.getURL()).append("/chat/user")
-                .append("?").append("login=").append(userName)
-                .append("&").append("room=").append(room)
-                .append("&").append("action=").append(action).toString();
+        final StringBuilder requestLine = new StringBuilder();
+        requestLine.append(Utils.getURL()).append("/chat/user");
+        requestLine.append("?").append("login=").append(userName);
+        requestLine.append("&").append("room=").append(room);
+        requestLine.append("&").append("action=").append(action);
 
-        URL get = new URL(request);
+        URL get = new URL(requestLine.toString());
         HttpURLConnection conn = (HttpURLConnection) get.openConnection();
         conn.setRequestMethod("GET");
         conn.connect();
@@ -211,16 +211,15 @@ public class ConsoleClient {
         HttpURLConnection conn = (HttpURLConnection) get.openConnection();
         conn.setRequestMethod("GET");
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        String inputLine;
-        StringBuffer result = new StringBuffer();
+        InputStream is = conn.getInputStream();
+        try {
+            String result = new BufferedReader(new InputStreamReader(is))
+                    .lines().collect(Collectors.joining("\n"));
 
-        while ((inputLine = in.readLine()) != null) {
-            result.append(inputLine);
+            System.out.println("All users: \n" + result);
+        } finally {
+            is.close();
         }
-        in.close();
-
-        System.out.println("All users: " + result.toString());
     }
 
 }
