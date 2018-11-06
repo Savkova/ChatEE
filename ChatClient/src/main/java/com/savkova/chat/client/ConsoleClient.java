@@ -116,6 +116,7 @@ public class ConsoleClient {
         HttpURLConnection conn = (HttpURLConnection) get.openConnection();
         conn.setRequestMethod("GET");
         conn.connect();
+        conn.getResponseMessage();
     }
 
     private static void login() throws IOException {
@@ -199,7 +200,7 @@ public class ConsoleClient {
         conn.setRequestProperty("Cookie", sessionId);
         conn.connect();
 
-//        System.out.println(conn.getHeaderField("session_status"));
+        conn.getHeaderField("session_status");
         System.out.println("'" + userName + "' has been logged out.");
 
         sessionId = null;
