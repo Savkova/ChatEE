@@ -1,5 +1,7 @@
 package com.savkova.chat.server.servlets;
 
+import com.savkova.chat.server.entities.User;
+import com.savkova.chat.server.storage.UsersStorage;
 import com.savkova.chat.server.util.VerifyUser;
 
 import javax.servlet.ServletException;
@@ -23,6 +25,9 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute(LOGIN, login);
                 response.setHeader(LOGIN, "true");
                 response.setHeader(PASS, "true");
+
+                User user = UsersStorage.getInstance().getUser(login);
+                user.setStatus(true);
             } else {
                 response.setHeader(PASS, "false");
                 response.setStatus(400);

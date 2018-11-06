@@ -21,13 +21,15 @@ public class GetAllUsersServlet extends HttpServlet {
 
         List<User> users = UsersStorage.getInstance().getAllUsers();
 
-        List<String> names = new ArrayList<>();
+        List<String> usersInfo = new ArrayList<>();
         for (User user : users) {
-            names.add(user.getName());
+            usersInfo.add(user.toString());
         }
 
         PrintWriter pw = response.getWriter();
-        pw.print(names);
+        for (String info : usersInfo) {
+            pw.println(info);
+        }
 
     }
 
