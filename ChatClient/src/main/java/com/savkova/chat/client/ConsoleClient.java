@@ -60,7 +60,8 @@ public class ConsoleClient {
     }
 
     private static void startChat(String userName) throws IOException {
-        Thread th = new Thread(new GetMessagesThread(userName));
+        GetMessagesThread getMessagesThread = new GetMessagesThread(userName);
+        Thread th = new Thread(getMessagesThread);
         th.setDaemon(true);
         th.start();
 
@@ -76,7 +77,7 @@ public class ConsoleClient {
             String text = scanner.nextLine();
             if (text.toLowerCase().equals(actionMarker + LOGOUT)) {
                 logout(userName);
-                GetMessagesThread.stopThread(true);
+                getMessagesThread.stopThread();
                 break;
             }
 

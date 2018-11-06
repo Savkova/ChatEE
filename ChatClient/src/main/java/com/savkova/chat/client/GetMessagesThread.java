@@ -15,12 +15,13 @@ public class GetMessagesThread implements Runnable {
     private final Gson gson;
     private Date lastReadDate;
     private String userName;
-    private static boolean isStop;
+    private boolean isStop;
 
     public GetMessagesThread(String userName) {
         gson = new GsonBuilder().create();
         this.userName = userName;
         this.lastReadDate = new Date(1541030400);
+        isStop = false;
     }
 
     @Override
@@ -65,7 +66,7 @@ public class GetMessagesThread implements Runnable {
         }
     }
 
-    public static void stopThread(boolean marker) {
-        isStop = marker;
+    public void stopThread() {
+        this.isStop = true;
     }
 }
