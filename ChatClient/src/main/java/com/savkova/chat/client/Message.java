@@ -24,13 +24,14 @@ public class Message {
         this.from = from;
         this.to = ALL;
 
-        if (text.startsWith(privateMessageMarker) && text.contains(delimiter)) {
-            this.to = text.substring(privateMessageMarker.length(), text.indexOf(delimiter));
-            privateText = text.substring(text.indexOf(delimiter) + delimiter.length()).trim();
+        String space = " ";
+        if (text.startsWith(privateMessageMarker)&&text.contains(space)) {
+            this.to = text.substring(privateMessageMarker.length(), text.indexOf(" "));
+            privateText = text.substring(text.indexOf(" ")).trim();
             this.text = privateText;
-        } else if (text.startsWith(roomMessageMarker) && text.contains(delimiter)) {
-            this.to = text.substring(roomMessageMarker.length(), text.indexOf(delimiter));
-            roomText = text.substring(text.indexOf(delimiter) + delimiter.length()).trim();
+        } else if (text.startsWith(roomMessageMarker) && text.contains(space)) {
+            this.to = text.substring(roomMessageMarker.length(), text.indexOf(space));
+            roomText = text.substring(text.indexOf(space)).trim();
             this.text = roomText;
         } else {
             this.text = text;

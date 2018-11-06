@@ -15,8 +15,6 @@ public class Utils {
     public static final String privateMessageMarker = "@";
     public static final String actionMarker = "#";
     public static final String roomMessageMarker = "$";
-    public static final String delimiter = ":";
-
 
     public static String getURL() {
         return URL + ":" + PORT;

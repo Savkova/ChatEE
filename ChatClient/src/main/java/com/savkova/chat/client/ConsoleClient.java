@@ -66,8 +66,8 @@ public class ConsoleClient {
         th.start();
 
         System.out.println("\nLet's start!\n");
-        System.out.println("'" + privateMessageMarker + "name" + delimiter + " ...'" + " for private message");
-        System.out.println("'" + privateMessageMarker + "room" + delimiter + " ...'" + " for room message");
+        System.out.println("'" + privateMessageMarker + "name" + " ...'" + " for private message");
+        System.out.println("'" + privateMessageMarker + "room" + " ...'" + " for room message");
         System.out.println("'" + actionMarker + JOIN + " room' for join room");
         System.out.println("'" + actionMarker + LEAVE + " room' for leave room");
         System.out.println("'" + actionMarker + LOGOUT + "' for log out");
@@ -82,7 +82,7 @@ public class ConsoleClient {
             }
 
             if (text.toLowerCase().startsWith(actionMarker + JOIN)) {
-                String room = text.substring(actionMarker.length() + JOIN.length()).trim();
+                String room = text.substring(actionMarker.length() + JOIN.length() + 1);
                 joinExitRoom(userName, room, JOIN);
                 System.out.print("You joined to '" + room + "'. ");
                 System.out.println("For leaving - '" + actionMarker + LEAVE + " " + room + "'");
@@ -90,7 +90,7 @@ public class ConsoleClient {
             }
 
             if (text.toLowerCase().startsWith(actionMarker + LEAVE)) {
-                String room = text.substring(actionMarker.length() + LEAVE.length()).trim();
+                String room = text.substring(actionMarker.length() + LEAVE.length() + 1);
                 joinExitRoom(userName, room, LEAVE);
                 System.out.println("You leaved '" + room + "'");
                 continue;
@@ -123,20 +123,28 @@ public class ConsoleClient {
         System.out.print("Enter your login: ");
         String userName = scanner.nextLine();
 
-        System.out.print("Enter your password: ");
-        String password = scanner.nextLine();
+        if (!userName.equals("")) {
+            System.out.print("Enter your password: ");
+            String password = scanner.nextLine();
 
-        boolean succeeded = isLogin(userName, password);
-        if (succeeded) {
-            startChat(userName);
+            boolean succeeded = isLogin(userName, password);
+            if (succeeded) {
+                startChat(userName);
+            } else {
+                System.out.println("Couldn't find your account or wrong password.");
+            }
         } else {
-            System.out.println("Couldn't find your account or wrong password.");
+            System.out.println("Invalid input. Login is not entered");
         }
     }
 
     private static boolean isLogin(String userName, String password) throws IOException {
-        URL url = new URL(Utils.getURL() + "/chat/login");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        URL url;
+        HttpURLConnection conn;
+
+
+        url = new URL(Utils.getURL() + "/chat/login");
+        conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty(LOGIN, userName);
         conn.setRequestProperty(PASS, password);
@@ -146,6 +154,7 @@ public class ConsoleClient {
 
         return (conn.getHeaderField(LOGIN).equals("true"))
                 && (conn.getHeaderField(PASS).equals("true"));
+
     }
 
     private static void createAccount() throws IOException {
@@ -155,14 +164,18 @@ public class ConsoleClient {
         System.out.print("enter your login: ");
         String userName = scanner.nextLine();
 
-        System.out.print("enter your password: ");
-        String password = scanner.nextLine();
+        if (!userName.equals("")) {
+            System.out.print("enter your password: ");
+            String password = scanner.nextLine();
 
-        boolean succeeded = isAccountCreated(userName, password);
-        if (succeeded) {
-            System.out.println("New account created - login '" + userName + "'");
+            boolean succeeded = isAccountCreated(userName, password);
+            if (succeeded) {
+                System.out.println("New account created - login '" + userName + "'");
+            } else {
+                System.out.println("That username is taken. Try another.");
+            }
         } else {
-            System.out.println("That username is taken. Try another.");
+            System.out.println("Invalid input. Login is not entered");
         }
     }
 
@@ -186,7 +199,7 @@ public class ConsoleClient {
         conn.setRequestProperty("Cookie", sessionId);
         conn.connect();
 
-        System.out.println(conn.getHeaderField("session_status"));
+//        System.out.println(conn.getHeaderField("session_status"));
         System.out.println("'" + userName + "' has been logged out.");
 
         sessionId = null;
