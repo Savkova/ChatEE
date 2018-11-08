@@ -29,7 +29,7 @@ public class GetMessageListServlet extends HttpServlet {
 
         for (String to : rooms) {
             String json = storage.toJSON(to);
-            if (json != null) {
+            if (!json.equals("")) {
                 PrintWriter pw = resp.getWriter();
                 pw.print(json);
             }
