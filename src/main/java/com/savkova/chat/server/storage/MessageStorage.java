@@ -7,7 +7,7 @@ import com.google.gson.GsonBuilder;
 import com.savkova.chat.server.util.JsonMessages;
 import com.savkova.chat.server.entities.Message;
 
-import static com.savkova.chat.server.util.Properties.ALL;
+import static com.savkova.chat.server.util.Constants.ALL;
 
 public class MessageStorage {
     private static final MessageStorage messageStorage = new MessageStorage();

@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-import static com.savkova.chat.server.util.Properties.*;
+import static com.savkova.chat.server.util.Constants.*;
 
 @WebServlet(name = "Logout", urlPatterns = "/logout")
 public class LogOutServlet extends HttpServlet {

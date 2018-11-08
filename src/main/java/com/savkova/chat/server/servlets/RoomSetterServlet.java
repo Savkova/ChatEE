@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.savkova.chat.server.util.Properties.*;
+import static com.savkova.chat.server.util.Constants.*;
 
 @WebServlet(name = "RoomSetter", urlPatterns = "/user")
 public class RoomSetterServlet extends HttpServlet {

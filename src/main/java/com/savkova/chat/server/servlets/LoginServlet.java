@@ -9,7 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 
-import static com.savkova.chat.server.util.Properties.*;
+import static com.savkova.chat.server.util.Constants.*;
 
 @WebServlet(name = "Login", urlPatterns = "/login")
 public class LoginServlet extends HttpServlet {
