@@ -1,9 +1,6 @@
 package com.savkova.chat.server.storage;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -28,13 +25,22 @@ public class MessageStorage {
     }
 
     public synchronized void add(Message m, String to) {
+        LinkedList<Message> list;
+
         if (map.containsKey(to)) {
-            map.get(to).add(m);
+            list = (LinkedList<Message>) map.get(to);
+
+            if (list.size() > 10)
+                list.remove();
+
+            list.add(m);
+
         } else {
-            List<Message> list = new LinkedList<>();
+            list = new LinkedList<>();
             list.add(m);
             map.put(to, list);
         }
+
     }
 
     public synchronized String toJSON(String to) {
