@@ -165,7 +165,7 @@ public class ConsoleClient {
         System.out.print("enter your login: ");
         String userName = scanner.nextLine();
 
-        if (!userName.equals("")) {
+        if (!userName.equals("") && !userName.equals(ALL)) {
             System.out.print("enter your password: ");
             String password = scanner.nextLine();
 
