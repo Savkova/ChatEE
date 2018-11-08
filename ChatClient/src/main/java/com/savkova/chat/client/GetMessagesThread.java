@@ -46,7 +46,7 @@ public class GetMessagesThread implements Runnable {
                                 json = gson.fromJson(e, JsonMessages.class);
 
                                 for (Message m : json.getList()) {
-                                    if (m.getDate().after(lastReadDate)) {
+                                    if ((m.getDate().after(lastReadDate))&& !m.getFrom().equals(userName)) {
                                         System.out.println(m);
                                         lastReadDate = m.getDate();
                                     }
