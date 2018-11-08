@@ -172,6 +172,7 @@ public class ConsoleClient {
             boolean succeeded = isAccountCreated(userName, password);
             if (succeeded) {
                 System.out.println("New account created - login '" + userName + "'");
+                startChat(userName);
             } else {
                 System.out.println("That username is taken. Try another.");
             }
