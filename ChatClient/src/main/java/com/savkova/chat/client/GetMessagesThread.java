@@ -20,7 +20,7 @@ public class GetMessagesThread implements Runnable {
     public GetMessagesThread(String userName) {
         gson = new GsonBuilder().create();
         this.userName = userName;
-        this.lastReadDate = new Date(1541030400);
+        this.lastReadDate = new Date();
         isStop = false;
     }
 
