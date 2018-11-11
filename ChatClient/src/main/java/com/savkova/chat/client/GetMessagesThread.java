@@ -18,10 +18,10 @@ public class GetMessagesThread implements Runnable {
     private boolean isStop;
 
     public GetMessagesThread(String userName) {
-        gson = new GsonBuilder().create();
+        this.gson = new GsonBuilder().create();
         this.userName = userName;
         this.lastReadDate = new Date();
-        isStop = false;
+        this.isStop = false;
     }
 
     @Override
@@ -32,6 +32,7 @@ public class GetMessagesThread implements Runnable {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
                 conn.setRequestProperty("user", userName);
+                conn.setRequestProperty("Cookie", ConsoleClient.sessionId);
 
                 InputStream is = conn.getInputStream();
 

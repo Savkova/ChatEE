@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 import static com.savkova.chat.client.Utils.*;
 
 public class ConsoleClient {
-    private static Scanner scanner = new Scanner(System.in);
-    private static String sessionId;
+    static Scanner scanner = new Scanner(System.in);
+    static String sessionId;
 
     public static void main(String[] args) {
         System.out.println("Welcome to ChatEE!");
@@ -56,6 +56,82 @@ public class ConsoleClient {
             }
         }
         return actionNumber;
+    }
+
+    private static void createAccount() throws IOException {
+
+        System.out.println("\nFor creating new account ");
+
+        System.out.print("enter your login: ");
+        String userName = scanner.nextLine();
+
+        if (!userName.equals("") && !userName.equals(ALL)) {
+            System.out.print("enter your password: ");
+            String password = scanner.nextLine();
+
+            boolean succeeded = isAccountCreated(userName, password);
+            if (succeeded) {
+                System.out.println("New account created - login '" + userName + "'");
+
+                if (isLogin(userName, password))
+                    startChat(userName);
+
+            } else {
+                System.out.println("That username is taken. Try another.");
+            }
+        } else {
+            System.out.println("Invalid input. Login is not entered");
+        }
+    }
+
+    private static boolean isAccountCreated(String userName, String password) throws IOException {
+
+        URL url = new URL(Utils.getURL() + "/chat/signup");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty(LOGIN, userName);
+        conn.setRequestProperty(PASS, password);
+        conn.connect();
+
+        return (conn.getHeaderField(ACCOUNT).equals("created"));
+    }
+
+    private static void login() throws IOException {
+
+        System.out.print("Enter your login: ");
+        String userName = scanner.nextLine();
+
+        if (!userName.equals("")) {
+            System.out.print("Enter your password: ");
+            String password = scanner.nextLine();
+
+            boolean succeeded = isLogin(userName, password);
+            if (succeeded) {
+                startChat(userName);
+            } else {
+                System.out.println("Couldn't find your account or wrong password.");
+            }
+        } else {
+            System.out.println("Invalid input. Login is not entered");
+        }
+    }
+
+    private static boolean isLogin(String userName, String password) throws IOException {
+        URL url;
+        HttpURLConnection conn;
+
+        url = new URL(Utils.getURL() + "/chat/login");
+        conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty(LOGIN, userName);
+        conn.setRequestProperty(PASS, password);
+        conn.connect();
+
+        sessionId = conn.getHeaderField("Set-Cookie");
+
+        return (conn.getHeaderField(LOGIN).equals("true"))
+                && (conn.getHeaderField(PASS).equals("true"));
+
     }
 
     private static void startChat(String userName) throws IOException {
@@ -115,82 +191,9 @@ public class ConsoleClient {
         URL get = new URL(requestLine.toString());
         HttpURLConnection conn = (HttpURLConnection) get.openConnection();
         conn.setRequestMethod("GET");
+        conn.setRequestProperty("Cookie", sessionId);
         conn.connect();
         conn.getResponseMessage();
-    }
-
-    private static void login() throws IOException {
-
-        System.out.print("Enter your login: ");
-        String userName = scanner.nextLine();
-
-        if (!userName.equals("")) {
-            System.out.print("Enter your password: ");
-            String password = scanner.nextLine();
-
-            boolean succeeded = isLogin(userName, password);
-            if (succeeded) {
-                startChat(userName);
-            } else {
-                System.out.println("Couldn't find your account or wrong password.");
-            }
-        } else {
-            System.out.println("Invalid input. Login is not entered");
-        }
-    }
-
-    private static boolean isLogin(String userName, String password) throws IOException {
-        URL url;
-        HttpURLConnection conn;
-
-
-        url = new URL(Utils.getURL() + "/chat/login");
-        conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty(LOGIN, userName);
-        conn.setRequestProperty(PASS, password);
-        conn.connect();
-
-        sessionId = conn.getHeaderField("Set-Cookie");
-
-        return (conn.getHeaderField(LOGIN).equals("true"))
-                && (conn.getHeaderField(PASS).equals("true"));
-
-    }
-
-    private static void createAccount() throws IOException {
-
-        System.out.println("\nFor creating new account ");
-
-        System.out.print("enter your login: ");
-        String userName = scanner.nextLine();
-
-        if (!userName.equals("") && !userName.equals(ALL)) {
-            System.out.print("enter your password: ");
-            String password = scanner.nextLine();
-
-            boolean succeeded = isAccountCreated(userName, password);
-            if (succeeded) {
-                System.out.println("New account created - login '" + userName + "'");
-                startChat(userName);
-            } else {
-                System.out.println("That username is taken. Try another.");
-            }
-        } else {
-            System.out.println("Invalid input. Login is not entered");
-        }
-    }
-
-    private static boolean isAccountCreated(String userName, String password) throws IOException {
-
-        URL url = new URL(Utils.getURL() + "/chat/signup");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty(LOGIN, userName);
-        conn.setRequestProperty(PASS, password);
-        conn.connect();
-
-        return (conn.getHeaderField(ACCOUNT).equals("created"));
     }
 
     private static void logout(String userName) throws IOException {
