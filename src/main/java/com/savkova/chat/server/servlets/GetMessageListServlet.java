@@ -12,6 +12,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import static com.savkova.chat.server.util.Constants.LOGIN;
 
 @WebServlet(name = "GetList", urlPatterns = "/get")
 public class GetMessageListServlet extends HttpServlet {
@@ -19,20 +22,25 @@ public class GetMessageListServlet extends HttpServlet {
     private MessageStorage storage = MessageStorage.getInstance();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String userName = req.getHeader("user");
-
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String userName = request.getHeader("user");
         User user = UsersStorage.getInstance().getUser(userName);
-        Set<String> rooms = user.getRooms();
 
-        resp.setContentType("application/json");
+        HttpSession session = request.getSession(false);
+        if (session != null && session.getAttribute(LOGIN).equals(userName)) {
+            Set<String> rooms = user.getRooms();
 
-        for (String to : rooms) {
-            String json = storage.toJSON(to);
-            if (!json.equals("")) {
-                PrintWriter pw = resp.getWriter();
-                pw.print(json);
+            response.setContentType("application/json");
+
+            for (String to : rooms) {
+                String json = storage.toJSON(to);
+                if (!json.equals("")) {
+                    PrintWriter pw = response.getWriter();
+                    pw.print(json);
+                }
             }
-        }
+        } else
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
     }
 }

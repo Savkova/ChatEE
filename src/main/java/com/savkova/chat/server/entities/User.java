@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.savkova.chat.server.util.Constants.*;
+import static com.savkova.chat.server.util.Constants.ALL;
 
 public class User {
     private String name;
