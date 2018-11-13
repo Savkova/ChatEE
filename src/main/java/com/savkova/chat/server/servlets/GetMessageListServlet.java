@@ -1,46 +1,45 @@
 package com.savkova.chat.server.servlets;
 
-import com.savkova.chat.server.entities.User;
 import com.savkova.chat.server.storage.MessageStorage;
-import com.savkova.chat.server.storage.UsersStorage;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Set;
+import com.savkova.chat.server.util.Constants;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import static com.savkova.chat.server.util.Constants.LOGIN;
+import java.io.IOException;
 
 @WebServlet(name = "GetList", urlPatterns = "/get")
 public class GetMessageListServlet extends HttpServlet {
 
     private MessageStorage storage = MessageStorage.getInstance();
+    private static final int waitCounter = 30;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String userName = request.getHeader("user");
-        User user = UsersStorage.getInstance().getUser(userName);
-
         HttpSession session = request.getSession(false);
-        if (session != null && session.getAttribute(LOGIN).equals(userName)) {
-            Set<String> rooms = user.getRooms();
+        if (session != null && session.getAttribute(Constants.LOGIN).equals(userName)) {
 
             response.setContentType("application/json");
 
-            for (String to : rooms) {
-                String json = storage.toJSON(to);
-                if (!json.equals("")) {
-                    PrintWriter pw = response.getWriter();
-                    pw.print(json);
+            // if there are no messages - keeps connection
+            int counter = 0;
+            String json;
+            while ((json = storage.toJSON(userName)).equals("") && counter < waitCounter) {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+                counter++;
             }
-        } else
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
+            response.getOutputStream().write(json.getBytes("UTF-8"));
+
+            if (!json.equals(""))
+                storage.clearMessageList(userName);
+        }
     }
 }
