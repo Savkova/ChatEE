@@ -2,25 +2,20 @@ package com.savkova.chat.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonStreamParser;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 
 public class GetMessagesThread implements Runnable {
     private final Gson gson;
-    private Date lastReadDate;
     private String userName;
     private boolean isStop;
 
     public GetMessagesThread(String userName) {
         this.gson = new GsonBuilder().create();
         this.userName = userName;
-        this.lastReadDate = new Date();
         this.isStop = false;
     }
 
@@ -33,41 +28,40 @@ public class GetMessagesThread implements Runnable {
 
                 conn.setRequestProperty("user", userName);
                 conn.setRequestProperty("Cookie", ConsoleClient.sessionId);
+                conn.setRequestProperty("Connection", "Keep-Alive");
 
                 InputStream is = conn.getInputStream();
 
-                Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
-                JsonMessages json;
-                if (reader.ready())
-                    try {
-                        JsonStreamParser parser = new JsonStreamParser(reader);
-                        while (parser.hasNext()) {
-                            JsonElement e = parser.next();
-                            if (e.isJsonObject()) {
-                                json = gson.fromJson(e, JsonMessages.class);
+                byte[] buf = requestBodyToArray(is);
+                String strBuf = new String(buf, StandardCharsets.UTF_8);
 
-                                for (Message m : json.getList()) {
-                                    if ((m.getDate().after(lastReadDate))&& !m.getFrom().equals(userName)) {
-                                        System.out.println(m);
-                                        lastReadDate = m.getDate();
-                                    }
-                                }
-                            }
-                        }
-                        reader.close();
-                    } finally {
-                        is.close();
+                JsonMessages list = gson.fromJson(strBuf, JsonMessages.class);
+                if (list != null) {
+                    for (Message m : list.getList()) {
+                        System.out.println(m);
                     }
-
-                Thread.sleep(500);
+                }
             }
-        } catch (Exception ex) {
+        } catch (Exception e) {
             Thread.currentThread().interrupt();
-            ex.printStackTrace();
+            e.printStackTrace();
         }
     }
 
     public void stopThread() {
         this.isStop = true;
+    }
+
+    private byte[] requestBodyToArray(InputStream is) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        byte[] buf = new byte[10240];
+        int r;
+
+        do {
+            r = is.read(buf);
+            if (r > 0) bos.write(buf, 0, r);
+        } while (r != -1);
+
+        return bos.toByteArray();
     }
 }
