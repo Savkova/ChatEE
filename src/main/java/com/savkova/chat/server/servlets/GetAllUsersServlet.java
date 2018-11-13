@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +26,12 @@ public class GetAllUsersServlet extends HttpServlet {
             usersInfo.add(user.toString());
         }
 
-        PrintWriter pw = response.getWriter();
-        for (String info : usersInfo) {
-            pw.println(info);
-        }
+        OutputStream out = response.getOutputStream();
 
+        for (String info : usersInfo) {
+            out.write(info.getBytes("UTF-8"));
+            out.write("\r\n".getBytes());
+        }
     }
 
 }
