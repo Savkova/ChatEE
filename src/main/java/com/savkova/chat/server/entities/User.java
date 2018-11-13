@@ -1,10 +1,10 @@
 package com.savkova.chat.server.entities;
 
+import com.savkova.chat.server.util.Constants;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
-import static com.savkova.chat.server.util.Constants.ALL;
 
 public class User {
     private String name;
@@ -16,7 +16,7 @@ public class User {
         this.name = name;
         this.password = password;
         this.rooms = new HashSet<>();
-        this.rooms.add(ALL);
+        this.rooms.add(Constants.ALL);
         this.rooms.add(name);
         this.status = false;
     }
@@ -66,10 +66,10 @@ public class User {
     public String toString() {
         String sStatus = status ? "online" : "offline";
 
-        final StringBuilder sb = new StringBuilder("User{");
-        sb.append("name='").append(name).append('\'');
-        sb.append(", status=").append(sStatus);
-        sb.append('}');
+        final StringBuilder sb = new StringBuilder("User {");
+        sb.append("name = '").append(name).append("'");
+        sb.append(", status = ").append(sStatus);
+        sb.append("}");
         return sb.toString();
     }
 

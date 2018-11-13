@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import static com.savkova.chat.client.Utils.*;
 
 public class ConsoleClient {
-    static Scanner scanner = new Scanner(System.in);
+    static Scanner scanner = new Scanner(System.in, "UTF-8");
     static String sessionId;
 
     public static void main(String[] args) {
@@ -62,10 +62,10 @@ public class ConsoleClient {
 
         System.out.println("\nFor creating new account ");
 
-        System.out.print("enter your login: ");
+        System.out.print("enter your login (only latin characters and/or numbers): ");
         String userName = scanner.nextLine();
 
-        if (!userName.equals("") && !userName.equals(ALL)) {
+        if (isNameValid(userName)) {
             System.out.print("enter your password: ");
             String password = scanner.nextLine();
 
@@ -80,7 +80,7 @@ public class ConsoleClient {
                 System.out.println("That username is taken. Try another.");
             }
         } else {
-            System.out.println("Invalid input. Login is not entered");
+            System.out.println("Login contains invalid characters or not entered.");
         }
     }
 
@@ -89,6 +89,7 @@ public class ConsoleClient {
         URL url = new URL(Utils.getURL() + "/chat/signup");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
+        conn.setRequestProperty("Accept-Charset", "UTF-8");
         conn.setRequestProperty(LOGIN, userName);
         conn.setRequestProperty(PASS, password);
         conn.connect();
@@ -123,6 +124,7 @@ public class ConsoleClient {
         url = new URL(Utils.getURL() + "/chat/login");
         conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
+        conn.setRequestProperty("Accept-Charset", "UTF-8");
         conn.setRequestProperty(LOGIN, userName);
         conn.setRequestProperty(PASS, password);
         conn.connect();
@@ -141,11 +143,7 @@ public class ConsoleClient {
         th.start();
 
         System.out.println("\nLet's start!\n");
-        System.out.println("'" + privateMessageMarker + "name" + " ...'" + " for private message");
-        System.out.println("'" + privateMessageMarker + "room" + " ...'" + " for room message");
-        System.out.println("'" + actionMarker + JOIN + " room' for join room");
-        System.out.println("'" + actionMarker + LEAVE + " room' for leave room");
-        System.out.println("'" + actionMarker + LOGOUT + "' for log out");
+        showInstructions();
 
         System.out.println("\nEnter your message : ");
         while (true) {
@@ -158,10 +156,12 @@ public class ConsoleClient {
 
             if (text.toLowerCase().startsWith(actionMarker + JOIN)) {
                 String room = text.substring(actionMarker.length() + JOIN.length() + 1);
-                joinExitRoom(userName, room, JOIN);
-                System.out.print("You joined to '" + room + "'. ");
-                System.out.println("For leaving - '" + actionMarker + LEAVE + " " + room + "'");
-                continue;
+                if (isNameValid(room)) {
+                    joinExitRoom(userName, room, JOIN);
+                    System.out.print("You joined to '" + room + "'. ");
+                    System.out.println("For leaving - '" + actionMarker + LEAVE + " " + room + "'");
+                    continue;
+                }
             }
 
             if (text.toLowerCase().startsWith(actionMarker + LEAVE)) {
@@ -172,11 +172,10 @@ public class ConsoleClient {
             }
 
             Message message = new Message(userName, text);
-            int res = message.send(Utils.getURL() + "/chat/add?to=" + message.getTo());
+            int res = message.send(Utils.getURL() + "/chat/add?from=" + userName + "&to=" + message.getTo());
 
             if (res != 200) { // 200 OK
                 System.out.println("HTTP error occurred: " + res);
-                return;
             }
         }
     }
@@ -191,6 +190,7 @@ public class ConsoleClient {
         URL get = new URL(requestLine.toString());
         HttpURLConnection conn = (HttpURLConnection) get.openConnection();
         conn.setRequestMethod("GET");
+        conn.setRequestProperty("Accept-Charset", "UTF-8");
         conn.setRequestProperty("Cookie", sessionId);
         conn.connect();
         conn.getResponseMessage();
@@ -201,6 +201,7 @@ public class ConsoleClient {
         URL get = new URL(Utils.getURL() + "/chat/logout?login=" + userName + "&action=" + LOGOUT);
         HttpURLConnection conn = (HttpURLConnection) get.openConnection();
         conn.setRequestMethod("GET");
+        conn.setRequestProperty("Accept-Charset", "UTF-8");
         conn.setRequestProperty("Cookie", sessionId);
         conn.connect();
 
@@ -214,6 +215,7 @@ public class ConsoleClient {
         URL get = new URL(Utils.getURL() + "/chat/users");
         HttpURLConnection conn = (HttpURLConnection) get.openConnection();
         conn.setRequestMethod("GET");
+        conn.setRequestProperty("Accept-Charset", "UTF-8");
 
         InputStream is = conn.getInputStream();
         try {
@@ -224,6 +226,21 @@ public class ConsoleClient {
         } finally {
             is.close();
         }
+    }
+
+    private static boolean isNameValid(String name) {
+        if (!name.equals("") && !name.equals(ALL))
+            return name.matches("[a-zA-Z_0-9]+");
+
+        return false;
+    }
+
+    private static void showInstructions() {
+        System.out.println("'" + privateMessageMarker + "name" + " ...'" + " for private message");
+        System.out.println("'" + privateMessageMarker + "room" + " ...'" + " for room message");
+        System.out.println("'" + actionMarker + JOIN + " room' for join room");
+        System.out.println("'" + actionMarker + LEAVE + " room' for leave room");
+        System.out.println("'" + actionMarker + LOGOUT + "' for log out");
     }
 
 }

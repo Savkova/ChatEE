@@ -13,8 +13,8 @@ import java.io.IOException;
 
 import static com.savkova.chat.server.util.Constants.*;
 
-@WebServlet(name = "RoomSetter", urlPatterns = "/user")
-public class RoomSetterServlet extends HttpServlet {
+@WebServlet(name = "RoomManager", urlPatterns = "/user")
+public class RoomManagerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

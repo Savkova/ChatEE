@@ -30,9 +30,6 @@ public class MessageStorage {
         if (map.containsKey(to)) {
             list = (LinkedList<Message>) map.get(to);
 
-            if (list.size() > 10)
-                list.remove();
-
             list.add(m);
 
         } else {
@@ -43,7 +40,12 @@ public class MessageStorage {
 
     }
 
-    public synchronized String toJSON(String to) {
+    public synchronized void addRoom(String room) {
+        if (!map.containsKey(room))
+            map.put(room, new LinkedList<>());
+    }
+
+    public String toJSON(String to) {
         List<Message> list = null;
         if (map.containsKey(to)) {
             list = map.get(to);
@@ -54,9 +56,8 @@ public class MessageStorage {
         return gson.toJson(new JsonMessages(list));
     }
 
-    public void addRoom(String room) {
-        if (!map.containsKey(room))
-            map.put(room, new LinkedList<>());
+    public void clearMessageList(String name){
+        map.get(name).clear();
     }
 
 }

@@ -62,6 +62,7 @@ public class Message {
         HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
 
         conn.setRequestMethod("POST");
+        conn.setRequestProperty("Accept-Charset", "UTF-8");
         conn.setDoOutput(true);
 
         OutputStream os = conn.getOutputStream();
